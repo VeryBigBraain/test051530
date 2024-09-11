@@ -12,14 +12,32 @@ export type TButton = {
     | "error"
     | "info"
     | "warning";
-  text?: string;
+  children?: ReactNode;
+  onClickScript?: string;
 };
 
 export const Button = forwardRef<HTMLButtonElement, TButton>(
-  ({ size, variant, color, text }, ref) => {
+  ({ size, variant, color, children, onClickScript }, ref) => {
+    const handleClick = () => {
+      if (onClickScript) {
+        try {
+          const func = new Function(onClickScript);
+          func();
+        } catch (error) {
+          console.error("Error executing script:", error);
+        }
+      }
+    };
+
     return (
-      <MaterialButton ref={ref} size={size} variant={variant} color={color}>
-        {text}
+      <MaterialButton
+        ref={ref}
+        size={size}
+        variant={variant}
+        color={color}
+        onClick={handleClick}
+      >
+        {children}
       </MaterialButton>
     );
   }
